@@ -1,16 +1,29 @@
 var Botkit = require('botkit');
 var request = require("request");
 
+var PORT = process.env.PORT || 8080
+
 var controller = Botkit.slackbot({
     debug: false
     //include "log: false" to disable logging
     //or a "logLevel" integer from 0 to 7 to adjust logging verbosity
 });
 
+controller.setupWebserver(PORT, function (err, webserver) {
+    if (err) {
+        console.error(err);
+        process.exit(1);
+    }
+
+    // Setup our slash command webhook endpoints
+    controller.createWebhookEndpoints(webserver);
+});
+
+
 // connect the bot to a stream of messages
 controller.spawn({
     token: process.env.SLACK_TOKEN,
-}).startRTM()
+}).startRTM();
 
 // reply to a direct mention - @bot hello
 controller.on(['direct_mention', 'direct_message'], function (bot, message) {
