@@ -1,0 +1,29 @@
+{
+  "name": "bixi-bot",
+  "version": "1.0.0",
+  "description": "Bot to help you find Bixi stations in Montréal",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/gnut3ll4/bixi-bot.git"
+  },
+  "keywords": [
+    "bixi",
+    "slackbot",
+    "bot",
+    "wit.ai"
+  ],
+  "author": "Thibaut Tauveron",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gnut3ll4/bixi-bot/issues"
+  },
+  "homepage": "https://github.com/gnut3ll4/bixi-bot#readme",
+  "dependencies": {
+    "botkit": "^0.1.1",
+    "express": "^4.13.4"
+  }
+}
