@@ -55,7 +55,6 @@ function sendToWit(query, callback) {
 
         var json, ref, intent, i, len, results;
         json = JSON.parse(body);
-        console.log("wit response: " + body);
         if (json.outcomes.length > 0) {
             ref = json.outcomes;
             results = [];
@@ -63,16 +62,12 @@ function sendToWit(query, callback) {
                 intent = ref[i];
                 results.push((function (intent) {
                     callback("" + intent.intent, {
-                        // res: query,
+                        res: query,
                         entities: intent.entities
                     });
                 })(intent));
             }
-            // return results;
         }
-
-
-        // callback(body);
     });
 
 }
