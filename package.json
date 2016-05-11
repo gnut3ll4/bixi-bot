@@ -24,6 +24,7 @@
   "homepage": "https://github.com/gnut3ll4/bixi-bot#readme",
   "dependencies": {
     "botkit": "^0.1.1",
-    "express": "^4.13.4"
+    "express": "^4.13.4",
+    "request": "^2.72.0"
   }
 }
