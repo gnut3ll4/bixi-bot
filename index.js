@@ -31,8 +31,8 @@ controller.on(['direct_mention', 'direct_message'], function (bot, message) {
     //To wit.ai
     sendToWit(message.text,
         //Wit response
-        (function (intent, res) {
-            bot.reply(message, 'CALLBACK :\n' + intent + '\n' + JSON.stringify(res));
+        (function (intent, result) {
+            bot.reply(message, 'CALLBACK :\n' + intent + '\n' + JSON.stringify(result));
         }));
 
 
@@ -45,7 +45,7 @@ function sendToWit(query, callback) {
         qs: {q: query},
         headers: {
             "content-type": 'application/json',
-            accept: 'application/vnd.wit.20141022+json',
+            accept: 'application/vnd.wit.20160330+json',
             authorization: 'Bearer '+process.env.WIT_TOKEN
         }
     };
