@@ -76,8 +76,35 @@ controller.on(['direct_mention', 'direct_message'], function (bot, message) {
 
                         var stationSource = _.chain(stations).where({id: nearestSource.id})._wrapped[0],
                             stationDestination = _.chain(stations).where({id: nearestDestination.id})._wrapped[0];
+
+                        var reply_with_attachments = {
+                            'text': 'Here\'s your travel',
+                            'attachments': [
+                                {
+                                    'fallback': 'To be useful, I need you to invite me in a channel.',
+                                    'title': 'How can I help you?',
+                                    "fields": [
+                                        {
+                                            "title": "From",
+                                            "value": stationSource.s,
+                                            "short": true
+                                        },
+                                        {
+                                            "title": "To",
+                                            "value": stationDestination.s,
+                                            "short": true
+                                        }
+                                    ],
+                                    'text': 'To be useful, I need you to invite me in a channel ',
+                                    "image_url": getMapUrl(stationSource.la+","+stationSource.lo,stationDestination.la+","+stationDestination.lo),
+                                    'color': '#7CD197'
+                                }
+                            ]
+
+                        };
                         //
-                        bot.reply(message, 'Maps:\n'+ getMapUrl(stationSource.la+","+stationSource.lo,stationDestination.la+","+stationDestination.lo));
+                        bot.reply(message, reply_with_attachments );
+                        // getMapUrl(stationSource.la+","+stationSource.lo,stationDestination.la+","+stationDestination.lo)
                         // bot.reply(message, 'CALLBACK :\n' + intent + '\n' + JSON.stringify(_.chain(stations).where({id: nearestSource.id})));
 
                     }));
