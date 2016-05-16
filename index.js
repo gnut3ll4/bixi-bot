@@ -4,6 +4,7 @@ var geolib = require("geolib");
 var _ = require("underscore");
 var geocoder = require('geocoder');
 var async = require('async');
+var distance = require('google-distance');
 
 var PORT = process.env.PORT || 8080
 
@@ -77,33 +78,53 @@ controller.on(['direct_mention', 'direct_message'], function (bot, message) {
                         var stationSource = _.chain(stations).where({id: nearestSource.id})._wrapped[0],
                             stationDestination = _.chain(stations).where({id: nearestDestination.id})._wrapped[0];
 
-                        var reply_with_attachments = {
-                            'text': 'Here\'s your travel',
-                            'attachments': [
-                                {
-                                    'fallback': 'To be useful, I need you to invite me in a channel.',
-                                    'title': 'How can I help you?',
-                                    "fields": [
-                                        {
-                                            "title": "From",
-                                            "value": stationSource.s,
-                                            "short": true
-                                        },
-                                        {
-                                            "title": "To",
-                                            "value": stationDestination.s,
-                                            "short": true
-                                        }
-                                    ],
-                                    'text': 'To be useful, I need you to invite me in a channel ',
-                                    "image_url": getMapUrl(stationSource.la+","+stationSource.lo,stationDestination.la+","+stationDestination.lo),
-                                    'color': '#7CD197'
-                                }
-                            ]
+                        distance.get(
+                            {
+                                origin: stationSource.la + ',' + stationSource.lo,
+                                destination: stationDestination.la + ',' + stationDestination.lo,
+                                mode: 'bicycling',
+                                units: 'metric'
+                            }, function (err, data) {
+                                if (err) return console.log(err);
+                                console.log(data);
 
-                        };
-                        //
-                        bot.reply(message, reply_with_attachments );
+                                var reply_with_attachments = {
+                                    // 'text': 'Here\'s your travel',
+                                    'attachments': [
+                                        {
+                                            'title': ':link: My ride ',
+                                            'title_link': 'https://www.google.ca/maps/dir/' +
+                                            stationSource.la + ',' + stationSource.lo + '/' +
+                                            stationDestination.la + ',' + stationDestination.lo+'/'+
+                                            '/data=!3m1!4b1!4m2!4m1!3e1',
+                                            'fallback': 'To be useful, I need you to invite me in a channel.',
+                                            "fields": [
+                                                {
+                                                    "title": "From",
+                                                    "value": ':round_pushpin: ' + stationSource.s,
+                                                    "short": true
+                                                },
+                                                {
+                                                    "title": "To",
+                                                    "value": ":triangular_flag_on_post: " + stationDestination.s,
+                                                    "short": true
+                                                }
+                                            ],
+                                            'text': 'Distance and time\n    :bike: : ' + data.distance + '\n    :stopwatch: : ' + data.duration,
+                                            "image_url": getMapUrl(
+                                                stationSource.la + "," + stationSource.lo,
+                                                stationDestination.la + "," + stationDestination.lo),
+                                            'color': '#7CD197'
+                                        }
+                                    ]
+
+                                };
+
+
+                                bot.reply(message, reply_with_attachments);
+                            });
+
+
                         // getMapUrl(stationSource.la+","+stationSource.lo,stationDestination.la+","+stationDestination.lo)
                         // bot.reply(message, 'CALLBACK :\n' + intent + '\n' + JSON.stringify(_.chain(stations).where({id: nearestSource.id})));
 
@@ -118,11 +139,12 @@ function getMapUrl(source, destination) {
         "autoscale=1&" +
         "size=500x300&" +
         "maptype=terrain&" +
-        "key="+process.env.GOOGLE_MAP_TOKEN+"&" +
+        "key=" + process.env.GOOGLE_MAP_TOKEN + "&" +
         "format=png&" +
         "visual_refresh=true&" +
-        "markers=size:mid%7Ccolor:0xff0000%7Clabel:2%7C"+destination+"&" +
-        "markers=size:mid%7Ccolor:0x2bea3a%7Clabel:1%7C"+source;
+        "markers=icon:http://www.emoji-cheat-sheet.com/graphics/emojis/triangular_flag_on_post.png%7Cshadow:true%7C" + destination + "&" +
+        "markers=icon:http://www.emoji-cheat-sheet.com/graphics/emojis/round_pushpin.png%7Cshadow:true%7C" + source;
+
 }
 
 function getBixiStations(callback) {
