@@ -96,7 +96,8 @@ controller.on(['direct_mention', 'direct_message'], function (bot, message) {
                                             'title_link': 'https://www.google.ca/maps/dir/' +
                                             stationSource.la + ',' + stationSource.lo + '/' +
                                             stationDestination.la + ',' + stationDestination.lo+'/'+
-                                            '/data=!3m1!4b1!4m2!4m1!3e1',
+                                               '@' + (stationSource.la + stationDestination.la)/2+ ','+(stationSource.lo + stationDestination.lo)/2 +
+                                            '/data=!4m2!4m1!3e1',
                                             'fallback': 'To be useful, I need you to invite me in a channel.',
                                             "fields": [
                                                 {
