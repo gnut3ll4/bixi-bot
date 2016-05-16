@@ -5,8 +5,11 @@ var _ = require("underscore");
 var geocoder = require('geocoder');
 var async = require('async');
 var distance = require('google-distance');
+var GooglePlacesAPI = require('googleplaces');
 
-var PORT = process.env.PORT || 8080
+var googlePlacesAPI = new GooglePlacesAPI(process.env.GOOGLE_MAP_TOKEN,'json');
+
+var PORT = process.env.PORT || 8080;
 
 var controller = Botkit.slackbot({
     debug: false
@@ -41,16 +44,39 @@ controller.on(['direct_mention', 'direct_message'], function (bot, message) {
 
             async.parallel([
                     function (callback) {
-                        geocoder.geocode(result.entities.origin[0].value, callback);
+                        var parameters = {
+                            query: result.entities.origin[0].value + " Montréal"
+                        };
+
+                        googlePlacesAPI.textSearch(parameters, function (error, result) {
+                            if(result.status == 'ZERO_RESULTS') {
+                                console.log(result.status)
+                            } else {
+                                callback(null,result.results[0]);
+                            }
+                        });
+                        // geocoder.geocode(result.entities.origin[0].value, callback);
                     },
                     function (callback) {
-                        geocoder.geocode(result.entities.destination[0].value, callback);
+
+                        var parameters = {
+                            query: result.entities.destination[0].value + " Montréal"
+                        };
+
+                        googlePlacesAPI.textSearch(parameters, function (error, result) {
+                            if(result.status == 'ZERO_RESULTS') {
+                                console.log(result.status)
+                            } else {
+                                callback(null,result.results[0]);
+                            }
+                        });
+                        // geocoder.geocode(result.entities.destination[0].value, callback);
                     }
                 ],
                 function (err, results) {
 
-                    var source = results[0].results[0].geometry.location;
-                    var destination = results[1].results[0].geometry.location;
+                    var source = results[0].geometry.location;
+                    var destination = results[1].geometry.location;
 
                     getBixiStations((function (stations) {
 
@@ -115,7 +141,7 @@ controller.on(['direct_mention', 'direct_message'], function (bot, message) {
                                             "image_url": getMapUrl(
                                                 stationSource.la + "," + stationSource.lo,
                                                 stationDestination.la + "," + stationDestination.lo),
-                                            'color': '#7CD197'
+                                            // 'color': '#e63934'
                                         }
                                     ]
 
