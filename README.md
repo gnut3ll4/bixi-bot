@@ -1,5 +1,7 @@
 # Bixi-bot
 
+![Screenshot](https://raw.githubusercontent.com/gnut3ll4/bixi-bot/master/img/screenshot_01.png)
+
 ## Configuration
 
 Run __npm install__ in project folder to resolve npm dependencies
